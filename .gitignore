@@ -1,5 +1,15 @@
-.terraform/
+# Terraform state files
 *.tfstate
 *.tfstate.*
+
+# Crash log files
+crash.log
+
+# Exclude .terraform directory
+.terraform/
+
+# Exclude Terraform lock file
 .terraform.lock.hcl
-.terraform
+
+# Exclude backup files
+*.backup

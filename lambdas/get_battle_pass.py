@@ -6,8 +6,9 @@ from decimal import Decimal
 # Initialize the DynamoDB resource
 dynamodb = boto3.resource('dynamodb')
 
-# Reference the BattlePassProgress table
-table = dynamodb.Table('BattlePassProgress')
+# Reference the DynamoDB tables
+progress_table = dynamodb.Table('BattlePass_Progress')
+data_table = dynamodb.Table('BattlePass_Data')
 
 # Helper function to convert DynamoDB item to JSON serializable format
 def decimal_to_float(obj):
@@ -28,38 +29,82 @@ def decimal_to_float(obj):
         return obj
 
 def lambda_handler(event, context):
-    print("Received event:", json.dumps(event))  # Log the received event
-
     try:
-        # Extract userId and seasonId from the query string parameters
-        user_id = event['queryStringParameters']['userId']
-        season_id = event['queryStringParameters']['seasonId']
-        
-        # Query the table using the Global Secondary Index (GSI) for the given seasonId
-        response = table.query(
-            IndexName='SeasonIndex',
-            KeyConditionExpression=Key('seasonId').eq(season_id)
-        )
-        
-        # Filter the items by userId
-        items = [item for item in response['Items'] if item['userId'] == user_id]
-        
-        # Check if the filtered query returned any items
-        if items:
-            # If items were found, return the first item with a 200 status code
-            item = decimal_to_float(items[0])
+        # Validate headers
+        if 'headers' not in event or 'player_id' not in event['headers']:
             return {
-                'statusCode': 200,
-                'body': json.dumps(item)
+                'statusCode': 400,
+                'body': json.dumps({'message': 'Missing required header: player_id'})
             }
+
+        player_id = event['headers']['player_id'].strip()
+
+        # Validate body
+        if 'body' not in event:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'Missing request body'})
+            }
+
+        body = json.loads(event['body'])
+
+        if 'battle_pass_id' not in body:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'Missing required parameter: battle_pass_id'})
+            }
+
+        battle_pass_id = body['battle_pass_id']
+
+        # Fetch player progress
+        response = progress_table.get_item(
+            Key={
+                'player_id': player_id,
+                'battle_pass_id': battle_pass_id
+            }
+        )
+
+        if 'Item' in response:
+            # If player progress exists, retrieve current level and XP
+            player_progress = response['Item']
+            level = int(player_progress['level'])
+            xp = int(player_progress['xp'])
+
+            # Fetch title from battle pass data
+            data_response = data_table.get_item(
+                Key={
+                    'battle_pass_id': battle_pass_id,
+                    'level': level
+                }
+            )
+
+            if 'Item' in data_response:
+                title = data_response['Item']['title']
+
+                # Return the player's current progress in the battle pass
+                return {
+                    'statusCode': 200,
+                    'body': json.dumps({
+                        'battle_pass_id': battle_pass_id,
+                        'title': title,
+                        'level': level,
+                        'xp': xp
+                    }, default=decimal_to_float)
+                }
+            else:
+                # If the battle pass level is not found, return an error
+                return {
+                    'statusCode': 404,
+                    'body': json.dumps({'message': 'Battle pass level not found'})
+                }
         else:
-            # If no items were found, return a 404 status code with an error message
+            # If the player progress is not found, return an error
             return {
                 'statusCode': 404,
-                'body': json.dumps({'message': 'User not found'})
+                'body': json.dumps({'message': 'Player progress not found'})
             }
     except Exception as e:
-        print("Error:", str(e))  # Log any errors
+        # Handle any exceptions that occur
         return {
             'statusCode': 500,
             'body': json.dumps({'message': 'Internal server error', 'error': str(e)})

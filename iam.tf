@@ -1,4 +1,4 @@
-// Define the IAM role for the Lambda functions
+//Lambda execution role
 resource "aws_iam_role" "lambda_exec" {
   name = "lambda_exec_role"
 
@@ -17,13 +17,13 @@ resource "aws_iam_role" "lambda_exec" {
   })
 }
 
-// Attach the basic execution role policy to the IAM role
+//Attaching the Lambda Policy 
 resource "aws_iam_role_policy_attachment" "lambda_policy" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-// Define a custom IAM policy for DynamoDB access
+//Policy to allow for actions on DynamoDB
 resource "aws_iam_role_policy" "dynamodb_policy" {
   name = "dynamodb_policy"
   role = aws_iam_role.lambda_exec.id
@@ -35,12 +35,15 @@ resource "aws_iam_role_policy" "dynamodb_policy" {
         Action = [
           "dynamodb:GetItem",
           "dynamodb:Query",
-          "dynamodb:PutItem"
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem"
         ]
-        Effect   = "Allow"
+        Effect = "Allow"
         Resource = [
-          aws_dynamodb_table.battlepass.arn,
-          "${aws_dynamodb_table.battlepass.arn}/index/*"
+          aws_dynamodb_table.battlepass_data.arn,
+          aws_dynamodb_table.battlepass_progress.arn,
+          "${aws_dynamodb_table.battlepass_data.arn}/index/*",
+          "${aws_dynamodb_table.battlepass_progress.arn}/index/*"
         ]
       }
     ]
