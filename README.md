@@ -11,13 +11,23 @@ This project implements a simple battle pass system that can be accessed through
     cd aws-battlepass-microservice
     ```
 
-2. **Initialize Terraform:**
+2. **Zip the Lambda files:**
+
+    ```bash
+    cd lambdas
+    zip add_battle_pass_xp.zip add_battle_pass_xp.py
+    zip get_battle_pass.zip get_battle_pass.py
+    cd ..
+
+    ```
+
+3. **Initialize Terraform:**
 
     ```bash
     terraform init
     ```
 
-3. **Apply Terraform configuration:**
+4. **Apply Terraform configuration:**
 
     ```bash
     terraform apply
@@ -25,7 +35,7 @@ This project implements a simple battle pass system that can be accessed through
 
     This will create all the necessary AWS resources, including DynamoDB tables, IAM roles, Lambda functions, and API Gateway.
 
-4. **Populate initial Battle Pass data:**
+5. **Populate initial Battle Pass data:**
 
     Run the `initialize_battle_pass_data.py` script to populate the `BattlePass_Data` table with initial data.
 
@@ -33,7 +43,7 @@ This project implements a simple battle pass system that can be accessed through
     python3 initialize_battle_pass_data.py
     ```
 
-5. **Run Tests:**
+6. **Run Tests:**
 
     The tests are located in the `tests` directory. You can run them using `unittest`:
 
