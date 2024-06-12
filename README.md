@@ -111,12 +111,40 @@ This project implements a simple battle pass system that can be accessed through
     terraform destroy
     ```
 
+## Running Tests
+
+To ensure your implementation handles expected usage and error cases, you can run unit tests provided in the `tests` directory.
+
+### Example Test Cases:
+
+1. **Add XP for a new player:**
+
+    - **Description:** Adds XP for a player who does not have existing progress in the specified battle pass.
+    - **Expected Result:** The player's progress is created with the specified XP and level.
+
+2. **Add XP for an existing player:**
+
+    - **Description:** Adds XP for a player who already has progress in the specified battle pass.
+    - **Expected Result:** The player's XP is updated correctly, and the level is adjusted if the XP threshold is crossed.
+
+3. **Add XP with an invalid battle pass ID:**
+
+    - **Description:** Tries to add XP using an invalid battle pass ID.
+    - **Expected Result:** A `404 Not Found` response indicating the battle pass does not exist.
+
+4. **Get progress for an existing player:**
+
+    - **Description:** Retrieves the progress of a player in a specified battle pass.
+    - **Expected Result:** The correct progress details, including XP, level, and title, are returned.
+
+5. **Get progress for a nonexistent player:**
+
+    - **Description:** Tries to get progress for a player who has no progress in the specified battle pass.
+    - **Expected Result:** A `404 Not Found` response indicating the player progress does not exist.
+
 ## License
 
 This project is licensed under the MIT License.
-
-
-
 
 ## Project Structure
 
@@ -140,4 +168,3 @@ This project is licensed under the MIT License.
 └── tests
     ├── test_add_battle_pass_xp.py
     └── test_get_battle_pass.py
-
