@@ -63,6 +63,16 @@ def lambda_handler(event, context):
         battle_pass_id = body['battle_pass_id']
         earned_xp = int(body['earned_xp'])
 
+        # Check if the battle_pass_id is valid
+        data_response = data_table.query(
+            KeyConditionExpression=Key('battle_pass_id').eq(battle_pass_id)
+        )
+        if data_response['Count'] == 0:
+            return {
+                'statusCode': 404,
+                'body': json.dumps({'message': 'Battle pass not found'})
+            }
+
         # Fetch player progress
         response = progress_table.get_item(
             Key={
@@ -85,10 +95,6 @@ def lambda_handler(event, context):
         new_xp = current_xp + earned_xp
         new_level = current_level
 
-        # Fetch all levels for the given battle pass
-        data_response = data_table.query(
-            KeyConditionExpression=Key('battle_pass_id').eq(battle_pass_id)
-        )
         max_level = len(data_response['Items'])
 
         # Level up the player while they have enough XP and haven't reached max level
@@ -96,26 +102,20 @@ def lambda_handler(event, context):
             new_xp -= 100
             new_level += 1
 
-        title = "Max Level"
         # Determine the title for the current level
-        if new_level < max_level or (new_level == 0 and new_xp < 100):
+        if new_level == 0:
+            title = ""
+        elif new_level <= max_level:
             title_response = data_table.get_item(
                 Key={
                     'battle_pass_id': battle_pass_id,
-                    'level': new_level + 1 if new_level == 0 else new_level
+                    'level': new_level
                 }
             )
             if 'Item' in title_response:
                 title = title_response['Item']['title']
-        elif new_level == max_level:
-            title_response = data_table.get_item(
-                Key={
-                    'battle_pass_id': battle_pass_id,
-                    'level': max_level
-                }
-            )
-            if 'Item' in title_response:
-                title = title_response['Item']['title']
+        else:
+            title = "Max Level"
 
         # Update or create the player progress in the database
         progress_table.put_item(

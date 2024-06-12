@@ -71,32 +71,28 @@ def lambda_handler(event, context):
             xp = int(player_progress['xp'])
 
             # Fetch title from battle pass data
-            data_response = data_table.get_item(
-                Key={
-                    'battle_pass_id': battle_pass_id,
-                    'level': level
-                }
-            )
-
-            if 'Item' in data_response:
-                title = data_response['Item']['title']
-
-                # Return the player's current progress in the battle pass
-                return {
-                    'statusCode': 200,
-                    'body': json.dumps({
+            title = ""
+            if level > 0:
+                data_response = data_table.get_item(
+                    Key={
                         'battle_pass_id': battle_pass_id,
-                        'title': title,
-                        'level': level,
-                        'xp': xp
-                    }, default=decimal_to_float)
-                }
-            else:
-                # If the battle pass level is not found, return an error
-                return {
-                    'statusCode': 404,
-                    'body': json.dumps({'message': 'Battle pass level not found'})
-                }
+                        'level': level
+                    }
+                )
+
+                if 'Item' in data_response:
+                    title = data_response['Item']['title']
+
+            # Return the player's current progress in the battle pass
+            return {
+                'statusCode': 200,
+                'body': json.dumps({
+                    'battle_pass_id': battle_pass_id,
+                    'title': title,
+                    'level': level,
+                    'xp': xp
+                }, default=decimal_to_float)
+            }
         else:
             # If the player progress is not found, return an error
             return {

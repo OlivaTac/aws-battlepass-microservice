@@ -13,3 +13,19 @@ crash.log
 
 # Exclude backup files
 *.backup
+
+# Python bytecode files
+*.pyc
+__pycache__/
+
+# Zip files
+*.zip
+
+# VSCode settings
+.vscode/
+
+# PyCharm settings
+.idea/
+
+# OS-specific files
+.DS_Store
