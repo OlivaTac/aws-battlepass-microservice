@@ -4,24 +4,26 @@ This project implements a simple battle pass system that can be accessed through
 
 ## Project Structure
 
+```plaintext
+.
 ├── apigateway.tf
 ├── dynamodb.tf
 ├── iam.tf
 ├── initialize_battle_pass_data.py
 ├── lambda.tf
 ├── lambdas
-│ ├── add_battle_pass_xp.py
-│ ├── add_battle_pass_xp.zip
-│ ├── get_battle_pass.py
-│ └── get_battle_pass.zip
+│   ├── add_battle_pass_xp.py
+│   ├── add_battle_pass_xp.zip
+│   ├── get_battle_pass.py
+│   └── get_battle_pass.zip
 ├── main.tf
 ├── outputs.tf
 ├── terraform.tfstate
 ├── terraform.tfstate.backup
 ├── variables.tf
 └── tests
-├── test_add_battle_pass_xp.py
-└── test_get_battle_pass.py
+    ├── test_add_battle_pass_xp.py
+    └── test_get_battle_pass.py
 
 
 ## Setup Instructions
