@@ -72,65 +72,67 @@ This project implements a simple battle pass system that can be accessed through
 - **Headers:**
   - `player_id: string`
 - **Body:**
-  ```json
-  {
-    "battle_pass_id": "string",
-    "earned_xp": integer
-  }
+    ```json
+    {
+      "battle_pass_id": "string",
+      "earned_xp": integer
+    }
+    ```
+- **Response:**
+    - `200 OK` on success
+      ```json
+      {
+        "battle_pass_id": "string",
+        "title": "string",
+        "level": integer,
+        "xp": integer
+      }
+      ```
+    - `400 Bad Request` if required parameters are missing
+    - `404 Not Found` if the battle pass does not exist
+    - `500 Internal Server Error` on server error
 
+### Get Battle Pass Progress
 
+- **Endpoint:** `/get-battle-pass-progress`
+- **Method:** `POST`
+- **Headers:**
+  - `player_id: string`
+- **Body:**
+    ```json
+    {
+      "battle_pass_id": "string"
+    }
+    ```
+- **Response:**
+    - `200 OK` on success
+      ```json
+      {
+        "battle_pass_id": "string",
+        "title": "string",
+        "level": integer,
+        "xp": integer
+      }
+      ```
+    - `400 Bad Request` if required parameters are missing
+    - `404 Not Found` if the player progress does not exist
+    - `500 Internal Server Error` on server error
 
+## Notes
 
+- Ensure you have the AWS CLI configured with appropriate permissions.
+- The `initialize_battle_pass_data.py` script requires boto3 to be installed. You can install it using `pip`:
 
-Response:
-200 OK on success
-{
-  "battle_pass_id": "string",
-  "title": "string",
-  "level": integer,
-  "xp": integer
-}
-400 Bad Request if required parameters are missing
-404 Not Found if the battle pass does not exist
-500 Internal Server Error on server error
+    ```bash
+    pip install boto3
+    ```
 
-Get Battle Pass Progress
-Endpoint: /get-battle-pass-progress
-Method: POST
-Headers:
-player_id: string
-Body:
-{
-  "battle_pass_id": "string"
-}
+- Make sure to destroy the resources after testing to avoid unnecessary charges:
 
-Response:
-200 OK on success
-{
-  "battle_pass_id": "string",
-  "title": "string",
-  "level": integer,
-  "xp": integer
-}
-400 Bad Request if required parameters are missing
-404 Not Found if the player progress does not exist
-500 Internal Server Error on server error
+    ```bash
+    terraform destroy
+    ```
 
-
-Notes
-Ensure you have the AWS CLI configured with appropriate permissions.
-
-The initialize_battle_pass_data.py script requires boto3 to be installed. You can install it using pip:
-
-
-pip install boto3
-
-Make sure to destroy the resources after testing to avoid unnecessary charges:
-
-terraform destroy
-
-
-License
+## License
 
 This project is licensed under the MIT License.
-
