@@ -65,13 +65,13 @@ This project implements a simple battle pass system that can be accessed through
     - For `ca-central-1` region:
 
         ```bash
-        AWS_REGION=ca-central-1 python3 initialize_battle_pass_data.py
+        python3 initialize_battle_pass_data.py ca-central-1
         ```
 
     - For `us-east-2` region:
 
         ```bash
-        AWS_REGION=us-east-2 python3 initialize_battle_pass_data.py
+        python3 initialize_battle_pass_data.py us-east-2
         ```
 
 7. **Run Tests:**
