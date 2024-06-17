@@ -11,31 +11,45 @@ This project implements a simple battle pass system that can be accessed through
     cd aws-battlepass-microservice
     ```
 
-2. **Zip the Lambda files:**
+2. **Initialize Terraform:**
+
+    ```bash
+    terraform init
+    ```
+
+3. **Zip the Lambda functions:**
 
     ```bash
     cd lambdas
     zip add_battle_pass_xp.zip add_battle_pass_xp.py
     zip get_battle_pass.zip get_battle_pass.py
     cd ..
-
     ```
 
-3. **Initialize Terraform:**
+4. **Create and Select Terraform Workspaces:**
 
     ```bash
-    terraform init
+    terraform workspace new ca-central-1
+    terraform workspace new us-east-2
     ```
 
-4. **Apply Terraform configuration:**
+5. **Apply Terraform configuration for each region:**
+
+    For `ca-central-1`:
 
     ```bash
-    terraform apply
+    terraform workspace select ca-central-1
+    terraform apply -var="aws_region=ca-central-1"
     ```
 
-    This will create all the necessary AWS resources, including DynamoDB tables, IAM roles, Lambda functions, and API Gateway.
+    For `us-east-2`:
 
-5. **Populate initial Battle Pass data:**
+    ```bash
+    terraform workspace select us-east-2
+    terraform apply -var="aws_region=us-east-2"
+    ```
+
+6. **Populate initial Battle Pass data:**
 
     Run the `initialize_battle_pass_data.py` script to populate the `BattlePass_Data` table with initial data.
 
@@ -43,13 +57,29 @@ This project implements a simple battle pass system that can be accessed through
     python3 initialize_battle_pass_data.py
     ```
 
-6. **Run Tests:**
+7. **Run Tests:**
 
     The tests are located in the `tests` directory. You can run them using `unittest`:
 
     ```bash
     python3 -m unittest discover tests
     ```
+
+## Notes
+
+- Ensure you have the AWS CLI configured with appropriate permissions.
+- The `initialize_battle_pass_data.py` script requires boto3 to be installed. You can install it using `pip`:
+
+    ```bash
+    pip install boto3
+    ```
+
+- Make sure to destroy the resources after testing to avoid unnecessary charges:
+
+    ```bash
+    terraform destroy
+    ```  
+    
 
 ## API Endpoints
 
