@@ -1,6 +1,6 @@
 // Define the Lambda function for getting BattlePass progress
 resource "aws_lambda_function" "get_battle_pass_progress" {
-  function_name = "BattlePass_GetProgress"
+  function_name = "BattlePass_GetProgress_${terraform.workspace}"
   handler       = "get_battle_pass.lambda_handler"
   runtime       = "python3.8"
   role          = aws_iam_role.lambda_exec.arn
@@ -11,7 +11,7 @@ resource "aws_lambda_function" "get_battle_pass_progress" {
 
 // Define the Lambda function for adding BattlePass progress
 resource "aws_lambda_function" "add_battle_pass_xp" {
-  function_name = "BattlePass_AddXP"
+  function_name = "BattlePass_AddXP_${terraform.workspace}"
   handler       = "add_battle_pass_xp.lambda_handler"
   runtime       = "python3.8"
   role          = aws_iam_role.lambda_exec.arn

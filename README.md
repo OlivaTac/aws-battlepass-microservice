@@ -19,12 +19,21 @@ This project implements a simple battle pass system that can be accessed through
 
 3. **Zip the Lambda functions:**
 
-    ```bash
-    cd lambdas
-    zip add_battle_pass_xp.zip add_battle_pass_xp.py
-    zip get_battle_pass.zip get_battle_pass.py
-    cd ..
-    ```
+    - On Mac/Linux:
+
+        ```bash
+        cd lambdas
+        zip add_battle_pass_xp.zip add_battle_pass_xp.py
+        zip get_battle_pass.zip get_battle_pass.py
+        cd ..
+        ```
+
+    - On Windows:
+
+        ```powershell
+        Compress-Archive -Path .\lambdas\add_battle_pass_xp.py -DestinationPath .\lambdas\add_battle_pass_xp.zip
+        Compress-Archive -Path .\lambdas\get_battle_pass.py -DestinationPath .\lambdas\get_battle_pass.zip
+        ```
 
 4. **Create and Select Terraform Workspaces:**
 
@@ -53,9 +62,17 @@ This project implements a simple battle pass system that can be accessed through
 
     Run the `initialize_battle_pass_data.py` script to populate the `BattlePass_Data` table with initial data.
 
-    ```bash
-    python3 initialize_battle_pass_data.py
-    ```
+    - For `ca-central-1` region:
+
+        ```bash
+        AWS_REGION=ca-central-1 python3 initialize_battle_pass_data.py
+        ```
+
+    - For `us-east-2` region:
+
+        ```bash
+        AWS_REGION=us-east-2 python3 initialize_battle_pass_data.py
+        ```
 
 7. **Run Tests:**
 
@@ -78,8 +95,7 @@ This project implements a simple battle pass system that can be accessed through
 
     ```bash
     terraform destroy
-    ```  
-    
+    ```
 
 ## API Endpoints
 
@@ -136,19 +152,26 @@ This project implements a simple battle pass system that can be accessed through
     - `404 Not Found` if the player progress does not exist
     - `500 Internal Server Error` on server error
 
-## Notes
+## Testing Lambda Functions in AWS Console
 
-- Ensure you have the AWS CLI configured with appropriate permissions.
-- The `initialize_battle_pass_data.py` script requires boto3 to be installed. You can install it using `pip`:
-
-    ```bash
-    pip install boto3
+- **Add Battle Pass XP JSON Payload:**
+    ```json
+    {
+      "headers": {
+        "player_id": "player1"
+      },
+      "body": "{\"battle_pass_id\": \"season1\", \"earned_xp\": 50}"
+    }
     ```
 
-- Make sure to destroy the resources after testing to avoid unnecessary charges:
-
-    ```bash
-    terraform destroy
+- **Get Battle Pass JSON Payload:**
+    ```json
+    {
+      "headers": {
+        "player_id": "player1"
+      },
+      "body": "{\"battle_pass_id\": \"season1\"}"
+    }
     ```
 
 ## Running Tests

@@ -1,6 +1,6 @@
 //Lambda execution role
 resource "aws_iam_role" "lambda_exec" {
-  name = "lambda_exec_role"
+  name = "lambda_exec_role_${terraform.workspace}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -25,7 +25,7 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
 
 //Policy to allow for actions on DynamoDB
 resource "aws_iam_role_policy" "dynamodb_policy" {
-  name = "dynamodb_policy"
+  name = "dynamodb_policy_${terraform.workspace}"
   role = aws_iam_role.lambda_exec.id
 
   policy = jsonencode({
