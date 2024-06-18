@@ -2,6 +2,7 @@
 resource "aws_api_gateway_rest_api" "battlepass_api" {
   name        = "BattlePassAPI"
   description = "API for BattlePass Microservice"
+  depends_on  = [aws_lambda_function.get_battle_pass_progress, aws_lambda_function.add_battle_pass_xp]
 }
 
 // Define the API Gateway resource for getting BattlePass progress
